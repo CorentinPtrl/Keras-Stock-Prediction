@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using Keras.Layers;
 using Keras.Models;
+using Keras.Optimizers;
 using Keras_Stock_Prediction.Utils;
 using Microsoft.Office.Interop.Excel;
 using Numpy;
@@ -142,17 +143,20 @@ namespace Keras_Stock_Prediction
             */
             ///Lstm Deuxième moins bon résultat
             Sequential model = new Sequential();
-            model.Add(new LSTM(50, return_sequences: true, input_shape: new Keras.Shape(100, 1)));
+            model.Add(new GRU(50, return_sequences: true, input_shape: new Keras.Shape(100, 1), activation: "tanh"));
             model.Add(new Dropout(0.2));
-            model.Add(new LSTM(50, return_sequences: true));
+            model.Add(new GRU(50, return_sequences: true, input_shape: new Keras.Shape(100, 1), activation: "tanh"));
             model.Add(new Dropout(0.2));
-            model.Add(new LSTM(50, return_sequences: true));
+            model.Add(new GRU(50, return_sequences: true, input_shape: new Keras.Shape(100, 1), activation: "tanh"));
             model.Add(new Dropout(0.2));
-            model.Add(new LSTM(50));
+            model.Add(new GRU(50, activation: "tanh"));
             model.Add(new Dropout(0.2));
             model.Add(new Dense(1));
+            
+            model.Summary();
+           
+            model.Compile(optimizer: new SGD(lr: 0.01f, decay: (float)1e-7, momentum:0.9f), loss: "mean_squared_error");
 
-            model.Compile(optimizer: "adam", loss: "mean_squared_error");
             return model;
         }
 
@@ -197,7 +201,7 @@ namespace Keras_Stock_Prediction
 
             Sequential model = CreateModel();
 
-            model.Fit(X_train, y_train, validation_data: new NDarray[] { X_test, y_test }, epochs: 100, batch_size: 64, verbose: 1);
+            model.Fit(X_train, y_train, validation_data: new NDarray[] { X_test, y_test }, epochs: 5, batch_size: 64, verbose: 1);
 
             NDarray train_predict = model.Predict(X_train);
             NDarray test_predict = model.Predict(X_test);

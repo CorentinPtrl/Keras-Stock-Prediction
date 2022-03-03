@@ -20,7 +20,13 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="27.2.1" />
-    <PackageReference Include="Keras.NET" Version="3.8.5" />
+    <PackageReference Include="Numpy.Bare" Version="3.8.1.28" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Keras">
+      <HintPath>..\..\Keras.NET\Keras\bin\Debug\netstandard2.0\Keras.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
